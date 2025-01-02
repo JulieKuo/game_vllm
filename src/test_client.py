@@ -2,7 +2,7 @@ from openai import OpenAI
 
 # 設定 OpenAI client
 client = OpenAI(
-    base_url="http://localhost:8000/generate",
+    base_url="http://localhost:8000/v1",
     api_key="EMPTY"
 )
 
@@ -10,7 +10,7 @@ client = OpenAI(
 model_id = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 
 # 定義測試用的提示文字
-prompt = "你好，請介紹一下自己"
+prompt = "介紹台灣美食"
 
 # 使用 OpenAI API 格式發送請求
 completion = client.chat.completions.create(
