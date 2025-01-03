@@ -1,14 +1,22 @@
-from vllm import LLM, SamplingParams
+import os
+import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from typing import List, Optional
-import uvicorn
+from vllm import LLM, SamplingParams
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "6"
 
 # 創建FastAPI應用實例
 app = FastAPI()
 
 # 初始化LLM模型
-llm = LLM(model="TinyLlama/TinyLlama-1.1B-Chat-v1.0") # 可替換為其他模型
+llm = LLM(
+    model="MediaTek-Research/Breeze-7B-Instruct-v1_0", # "TinyLlama/TinyLlama-1.1B-Chat-v1.0", "MediaTek-Research/Breeze-7B-Instruct-v1_0"
+    dtype="float16",  # 使用float16數據類型
+    # gpu_memory_utilization=0.8,  # 控制GPU記憶體使用率
+    # max_model_len=2048  # 限制上下文長度
+)
 
 # 定義資料模型類別,用於請求和回應的資料結構驗證
 class Message(BaseModel):
@@ -19,7 +27,7 @@ class ChatCompletionRequest(BaseModel):
     model: str  # 使用的模型名稱
     messages: List[Message]  # 對話歷史訊息列表
     temperature: Optional[float] = 0.7  # 生成文字的隨機性程度,預設0.7
-    max_tokens: Optional[int] = 100  # 生成文字的最大長度,預設100
+    max_tokens: Optional[int] = 300  # 生成文字的最大長度,預設300
 
 class ChatCompletionResponse(BaseModel):
     id: str = Field(default="chatcmpl-default")  # 回應ID
